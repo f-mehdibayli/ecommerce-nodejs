@@ -26,16 +26,54 @@ const userSchema = new mongoose.Schema({
         trim: true,
         minLength: [8, "Password must be at most 8 characters long"]
     },
-    role: {
+    roles: {
         type: String,
         enum: ["user", "admin", "seller"],
         default: "user"
+    },
+    phone: {
+        type: String,
+        required: [true, "Phone is required"],
+        trim: true,
+        maxLength: [15, "Phone must be at most 100 characters long"]
+    },
+    orders: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order"
+    }],
+    isStore: {
+        type: Boolean,
+        default: false
+    },
+    storeName: {
+        type: String,
+        trim: true,
+        maxLength: [100, "Store name must be at most 100 characters long"]
+    },
+    voen: {
+        type: String,
+        trim: true,
+        unique: [true, "VOEN already exists"],
+        maxLength: [20, "VOEN must be at most 20 characters long"]
+    },
+    storeDescription: {
+        type: String,
+        trim: true,
+        maxLength: [500, "Store description must be at most 500 characters long"]
+    },
+    raiting: {
+        type: Number,
+        default: 0
+    },
+    verified: {
+        type: Boolean,
+        default: false
     },
     refreshTokens: [{
         type: String,
         default: null
     }]
-})
+}, { timestamps: true })
 
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
