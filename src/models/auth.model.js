@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
     firstname: {
@@ -28,7 +29,7 @@ const userSchema = new mongoose.Schema({
     },
     roles: {
         type: String,
-        enum: ["user", "admin", "seller"],
+        enum: ["user", "admin", "store"],
         default: "user"
     },
     phone: {
@@ -38,8 +39,8 @@ const userSchema = new mongoose.Schema({
         maxLength: [15, "Phone must be at most 100 characters long"]
     },
     orders: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Order"
+        type: mongoose.Schema.ObjectId,
+        ref: "Order",
     }],
     isStore: {
         type: Boolean,
@@ -53,8 +54,8 @@ const userSchema = new mongoose.Schema({
     voen: {
         type: String,
         trim: true,
-        unique: [true, "VOEN already exists"],
-        maxLength: [20, "VOEN must be at most 20 characters long"]
+        default: null,
+        // unique: [true, "VOEN already exists"]
     },
     storeDescription: {
         type: String,
@@ -69,6 +70,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    favoriteProducts: [{
+        type: [mongoose.Schema.ObjectId],
+        ref: "Product",
+        default: []
+    }],
     refreshTokens: [{
         type: String,
         default: null
@@ -86,4 +92,4 @@ userSchema.methods.matchPassword = function (enteredPassword) {
     return bcrypt.compare(enteredPassword, this.password);
 };
 
-export const User = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

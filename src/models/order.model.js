@@ -4,29 +4,22 @@ const orderSchema = new mongoose.Schema({
     address: {
         type: String,
         required: [true, "Order address is required"],
-        trim: true,
-        maxLength: [100, "Store must be at most 100 characters long"]
+        trim: true
     },
     postcode: {
         type: String,
         required: [true, "Postcode is required"],
-        trim: true,
-        maxLength: [50, "Postcode must be at most 100 characters long"]
+        trim: true
     },
-    totalPrice: {
-        type: Number,
-        required: [true, "Order address is required"],
-        trim: true,
-        maxLength: [100, "Store must be at most 100 characters long"]
+    orderedProducts:{
+        type: mongoose.Schema.ObjectId,
+        ref: "Cart",
+        required: [true, "Ordered products reference is required"]
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    },
-    // orderItems: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "orderItems"
-    // }]
+    paymentId: {
+        type: String,
+        required: [true, "Payment ID is required"]
+    }
 }, { timestamps: true })
 
 export const Order = mongoose.model('Order', orderSchema)

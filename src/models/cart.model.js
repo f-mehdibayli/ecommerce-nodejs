@@ -1,16 +1,27 @@
 import mongoose from "mongoose";
 
 const cartSchema = new mongoose.Schema({
+     user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+        required: [true, "User reference is required"]
+    },
+     cartProducts: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "CartItem"
+        }
+    ],
+    currency: {
+        type: String,
+        required: [true, "Currency is required"]
+    },
     totalPrice: {
         type: Number,
-        required: [true, "Order address is required"],
-        trim: true,
-        maxLength: [100, "Store must be at most 100 characters long"]
+        required: [true, "Total price is required"],
+        trim: true
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-    }
+   
 }, { timestamps: true })
 
-export const Cart = mongoose.model('Cart', cartSchema)
+export default mongoose.model('Cart', cartSchema)
