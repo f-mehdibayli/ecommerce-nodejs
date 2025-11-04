@@ -5,7 +5,7 @@ const categorySchema = new mongoose.Schema({
         type: String,
         required: [true, "Category name is required"],
         unique: [true, "Category already exists"],
-        trim: true,
+        trim: true
     }
 }, { timestamps: true })
 

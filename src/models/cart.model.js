@@ -1,15 +1,22 @@
 import mongoose from "mongoose";
 
 const cartSchema = new mongoose.Schema({
-     user: {
+    user: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
         required: [true, "User reference is required"]
     },
-     cartProducts: [
+    cartProducts: [
         {
-            type: mongoose.Schema.ObjectId,
-            ref: "CartItem"
+            product: {
+                type: mongoose.Schema.ObjectId,
+                ref: "Product",
+                required: [true, "Product reference is required"]
+            },
+            count: {
+                type: Number,
+                default: 1
+            }
         }
     ],
     currency: {
@@ -19,9 +26,11 @@ const cartSchema = new mongoose.Schema({
     totalPrice: {
         type: Number,
         required: [true, "Total price is required"],
-        trim: true
+        trim: true,
+        default: 0,
+        min: [0, "Total price must be at least 0"]
     },
-   
+
 }, { timestamps: true })
 
 export default mongoose.model('Cart', cartSchema)

@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         minLength: [8, "Password must be at most 8 characters long"]
     },
-    roles: {
+    role: {
         type: String,
         enum: ["user", "admin", "store"],
         default: "user"
@@ -38,10 +38,10 @@ const userSchema = new mongoose.Schema({
         trim: true,
         maxLength: [15, "Phone must be at most 100 characters long"]
     },
-    orders: [{
-        type: mongoose.Schema.ObjectId,
+    orders: {
+        type: [mongoose.Schema.ObjectId],
         ref: "Order",
-    }],
+    },
     isStore: {
         type: Boolean,
         default: false
@@ -49,7 +49,8 @@ const userSchema = new mongoose.Schema({
     storeName: {
         type: String,
         trim: true,
-        maxLength: [100, "Store name must be at most 100 characters long"]
+        maxLength: [100, "Store name must be at most 100 characters long"],
+        default: null,
     },
     voen: {
         type: String,
@@ -60,7 +61,8 @@ const userSchema = new mongoose.Schema({
     storeDescription: {
         type: String,
         trim: true,
-        maxLength: [500, "Store description must be at most 500 characters long"]
+        maxLength: [500, "Store description must be at most 500 characters long"],
+        default: null
     },
     raiting: {
         type: Number,
@@ -70,24 +72,27 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    favoriteProducts: [{
+    favoriteProducts: {
         type: [mongoose.Schema.ObjectId],
         ref: "Product",
         default: []
-    }],
+    },
     refreshTokens: [{
         type: String,
         default: null
     }]
 }, { timestamps: true })
 
+//Bu Mongoose “middleware”-dir, yəni sənəd (document) bazaya yazılmadan əvvəl (save əməliyyatından öncə) avtomatik işləyir.
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
+
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
     next();
 });
 
+//Bu isə istifadəçinin daxil etdiyi parolu yoxlamaq üçün istifadə olunu
 userSchema.methods.matchPassword = function (enteredPassword) {
     return bcrypt.compare(enteredPassword, this.password);
 };

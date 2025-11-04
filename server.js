@@ -4,6 +4,7 @@ import { config } from './src/config/index.js';
 import AuthRoutes from './src/routes/auth.route.js';
 import ProductRoutes from './src/routes/product.route.js';
 import CartRoute from './src/routes/cart.route.js';
+import FavoriteRoute from './src/routes/favorite.route.js';
 
 const connectDB = async() => {
     try {
@@ -23,6 +24,8 @@ app.use(express.json());
 app.use('/auth', AuthRoutes );
 app.use('/products', ProductRoutes );
 app.use('/cart', CartRoute );
+app.use('/favorites', FavoriteRoute );
+
 
 app.listen(port, ()=> {
     connectDB();

@@ -11,26 +11,30 @@ export const getAllProducts = async (req, res) => {
 }
 
 export const addNewProduct = async (req, res) => {
+    console.log(req.user.roles);
+
+    const access = req.user.roles.includes('store');
+    if (!access) {
+        return res.status(403).json({ message: "Access Denied" });
+    }
+
+    const {
+        title,
+        description,
+        category,
+        price,
+        currency,
+        stock,
+        image,
+        storeId
+    } = req.body;
+
+    const newProduct = new Product({ title, description, category, price, currency, stock, image, storeId });
+    await newProduct.save();
+    res.status(201).json(newProduct);
+
     try {
-        const access = req.user.roles.includes('store');
-        if (!access) {
-            return res.status(403).json({ message: "Access Denied" });
-        }
 
-        const {
-            title,
-            description,
-            category,
-            price,
-            currency,
-            stock,
-            image,
-            storeId
-        } = req.body;
-
-        const newProduct = new Product({ title, description, category, price, currency, stock, image, storeId });
-        await newProduct.save();
-        res.status(201).json(newProduct);
 
     } catch (error) {
         res.status(500).json({ message: "Server Error" });
@@ -85,11 +89,11 @@ export const deleteProduct = async (req, res) => {
         const { id } = req.params.id
         const isProductDeleted = await Product.findByIdAndDelete(id)
 
-         if (!isProductDeleted) {
+        if (!isProductDeleted) {
             return res.status(404).json({ message: "Product not found" });
         }
 
-        res.status(200).json({messsage: "product deleted succesfully"})
+        res.status(200).json({ messsage: "product deleted succesfully" })
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

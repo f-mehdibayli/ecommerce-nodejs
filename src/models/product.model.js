@@ -5,7 +5,7 @@ const productSchema = mongoose.Schema({
         type: String,
         required: [true, "Product name is required"],
         trim: true,
-        maxLength: [200, "Product name must be at most 200 characters long"]
+        minLength: [3, "Title must be at least 3 characters"]
     },
      description: {
         type: String,
@@ -14,7 +14,8 @@ const productSchema = mongoose.Schema({
     },
     category: {
         type: mongoose.Schema.ObjectId,
-        ref: "Category"
+        ref: "Category",
+        required:true
     },
     price: {
         type: Number,
@@ -24,7 +25,7 @@ const productSchema = mongoose.Schema({
     },
     currency:{
         type: String,
-        default: "$",
+        default: "₼",
         enum: ["$", "₼", "₽", "€", "₼", "£", "¥"]
     },
     stock: {
@@ -39,7 +40,8 @@ const productSchema = mongoose.Schema({
     },
     storeId: {
         type: mongoose.Schema.ObjectId,
-        ref: "User"
+        ref: "User",
+        required:true
     }
 }, { timestamps: true })
 
