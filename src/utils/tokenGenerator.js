@@ -1,19 +1,26 @@
 import jwt from 'jsonwebtoken';
 
 export const generateAccessToken = (user, res = {}) => {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('ACCESS_TOKEN_SECRET is missing')
+    }
+
     const accessToken = jwt.sign(
         { id: user.id, role: user.role },
         process.env.ACCESS_TOKEN_SECRET,
-        { 
-            expiresIn: '5m' 
-        });
+        {
+            expiresIn: '5m'
+        }
+    );
 
-        res.cookie(
-            'accessToken', accessToken, {
-            httpOnly: true,
-            maxAge: 5*60*1000, // 5 minutes
-        });
-    
+    res.cookie(
+        'accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 5 * 60 * 1000, // 5 minutes
+    });
+
     return accessToken;
 }
 
@@ -21,15 +28,17 @@ export const generateRefreshToken = (user, res = {}) => {
     const refreshToken = jwt.sign(
         { id: user.id, role: user.role },
         process.env.REFRESH_TOKEN_SECRET,
-        { 
-            expiresIn: '7d' 
+        {
+            expiresIn: '7d'
         });
 
-        res.cookie(
-            'refreshToken', refreshToken, {
-            httpOnly: true,
-            maxAge: 7*24*60*60*1000, // 7 days
-        });
+    res.cookie(
+        'refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
     return refreshToken;
 }
